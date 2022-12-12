@@ -24,24 +24,24 @@ namespace ASPNETMVCCURD.Migrations
 
             modelBuilder.Entity("ASPNETMVCCURD.Models.Domain.Employee", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp");
 
                     b.Property<string>("Department")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<long>("Salary")
                         .HasColumnType("bigint");

@@ -8,7 +8,7 @@ builder.Services.AddControllersWithViews();
 
 //builder.Services.AddDbContext<MVCDemoDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("MvcDemoConnectionString")));
 builder.Services.AddDbContext<MVCDemoDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("MvcDemoConnectionString")));
-
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

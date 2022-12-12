@@ -40,7 +40,7 @@ namespace ASPNETMVCCURD.Controllers
         {
             var employee = new Employee()
             {
-                Id = Guid.NewGuid(),
+                //Id = default(int),
                 Name = addEmployeeRequest.Name,
                 Email = addEmployeeRequest.Email,
                 Salary = addEmployeeRequest.Salary,
@@ -53,7 +53,7 @@ namespace ASPNETMVCCURD.Controllers
             return RedirectToAction("Index");
         }
         [HttpGet]
-        public async Task<IActionResult> View(Guid Id)
+        public async Task<IActionResult> View(int Id)
         {
             var employee = await mvcDemoDbContext.Employees.FirstOrDefaultAsync(x => x.Id == Id);
             if (employee != null)

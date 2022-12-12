@@ -15,12 +15,12 @@ namespace ASPNETMVCCURD.Migrations
                 name: "Employees",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "varchar(100)", nullable: false),
+                    Email = table.Column<string>(type: "varchar(100)", nullable: false),
                     Salary = table.Column<long>(type: "bigint", nullable: false),
-                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Department = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    DateOfBirth = table.Column<DateTime>(type: "timestamp", nullable: false),
+                    Department = table.Column<string>(type: "varchar(100)", nullable: false)
                 },
                 constraints: table =>
                 {
