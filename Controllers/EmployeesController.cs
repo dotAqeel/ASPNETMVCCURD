@@ -3,31 +3,60 @@ using ASPNETMVCCURD.Models;
 using ASPNETMVCCURD.Models.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace ASPNETMVCCURD.Controllers
 {
     public class EmployeesController : Controller
     {
+        private readonly IMemoryCache _memoryCache;
         private readonly MVCDemoDbContext mvcDemoDbContext;
-        public EmployeesController(MVCDemoDbContext mvcDemoDbContext) 
+        public EmployeesController(IMemoryCache memoryCache, MVCDemoDbContext mvcDemoDbContext) 
         {
+            this._memoryCache = memoryCache;
             this.mvcDemoDbContext = mvcDemoDbContext;
         }
         [HttpGet]
         public async Task<IActionResult> Index(string SearchString) 
         {
-            if (string.IsNullOrEmpty(SearchString))
+            //if (string.IsNullOrEmpty(SearchString))
+            //{
+            //    var employees = await mvcDemoDbContext.Employees.ToListAsync();
+            //    return View(employees);
+            //}
+            //else 
+            //{
+            //    //var employees = await mvcDemoDbContext.Employees.ToListAsync();
+            //    var employees = await mvcDemoDbContext.Employees.Where(s => s.Name.Contains(SearchString)).ToListAsync();
+            //    return View(employees);
+            //}
+
+            var cacheKey = "employeeList";
+            //checks if cache entries exists
+            if (!_memoryCache.TryGetValue(cacheKey, out List<Employee> employeeList))
             {
-                var employees = await mvcDemoDbContext.Employees.ToListAsync();
-                return View(employees);
+                if (string.IsNullOrEmpty(SearchString))
+                {
+                    //calling the server
+                    employeeList = await mvcDemoDbContext.Employees.ToListAsync();
+                    //setting up cache options
+                    var cacheExpiryOptions = new MemoryCacheEntryOptions
+                    {
+                        AbsoluteExpiration = DateTime.Now.AddSeconds(50),
+                        Priority = CacheItemPriority.High,
+                        SlidingExpiration = TimeSpan.FromSeconds(20)
+                    };
+                    //setting cache entries
+                    _memoryCache.Set(cacheKey, employeeList, cacheExpiryOptions);
+                    return View(employeeList);
+                }
             }
             else 
             {
-                //var employees = await mvcDemoDbContext.Employees.ToListAsync();
                 var employees = await mvcDemoDbContext.Employees.Where(s => s.Name.Contains(SearchString)).ToListAsync();
                 return View(employees);
             }
-            
+            return View(employeeList);
         }
 
         [HttpGet]
@@ -40,7 +69,7 @@ namespace ASPNETMVCCURD.Controllers
         {
             var employee = new Employee()
             {
-                Id = Guid.NewGuid(),
+                //Id = default(int),
                 Name = addEmployeeRequest.Name,
                 Email = addEmployeeRequest.Email,
                 Salary = addEmployeeRequest.Salary,
@@ -53,7 +82,7 @@ namespace ASPNETMVCCURD.Controllers
             return RedirectToAction("Index");
         }
         [HttpGet]
-        public async Task<IActionResult> View(Guid Id)
+        public async Task<IActionResult> View(int Id)
         {
             var employee = await mvcDemoDbContext.Employees.FirstOrDefaultAsync(x => x.Id == Id);
             if (employee != null)
